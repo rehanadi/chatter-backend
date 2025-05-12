@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ModelDefinition, MongooseModule } from "@nestjs/mongoose";
+import { DbMigrationService } from "./db-migration.service";
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { ModelDefinition, MongooseModule } from "@nestjs/mongoose";
       }),
     }),
   ],
+  providers: [DbMigrationService],
 })
 export class DatabaseModule {
   // Register models in the module so can be used in repositories
