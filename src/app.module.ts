@@ -9,6 +9,7 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { UsersModule } from './users/users.module';
 import { GraphQLCSSMiddleware } from './app.middleware';
 import { LoggerModule } from "nestjs-pino";
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { LoggerModule } from "nestjs-pino";
     }),
     DatabaseModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
