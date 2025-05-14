@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
@@ -13,10 +13,17 @@ export class UsersService {
   }
 
   async create(createUserInput: CreateUserInput) {
-    return this.usersRepository.create({
-      ...createUserInput,
-      password: await this.hashPassword(createUserInput.password),
-    });
+    try {
+      return await this.usersRepository.create({
+        ...createUserInput,
+        password: await this.hashPassword(createUserInput.password),
+      });
+    } catch (err) {
+      if (err.message.includes('E11000')) {
+        throw new UnprocessableEntityException('Email already exists.');
+      }
+      throw err;
+    }
   }
 
   async findAll() {
@@ -32,11 +39,14 @@ export class UsersService {
       updateUserInput.password = await this.hashPassword(updateUserInput.password);
     }
 
-    return this.usersRepository.findOneAndUpdate({ _id }, {
-      $set: {
-        ...updateUserInput,
-      },
-    });
+    return this.usersRepository.findOneAndUpdate(
+      { _id },
+      {
+        $set: {
+          ...updateUserInput,
+        },
+      }
+    );
   }
 
   async remove(_id: string) {
