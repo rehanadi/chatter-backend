@@ -17,4 +17,11 @@ export class AuthController {
   ) {
     return this.authService.login(user, res);
   }
+
+  @Post('logout')
+  logout(
+    @Res({ passthrough: true }) res: Response
+  ) {
+    this.authService.logout(res);
+  }
 }
