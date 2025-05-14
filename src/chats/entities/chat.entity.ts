@@ -1,7 +1,8 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Prop, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { AbstractEntity } from "../../common/database/abstract.entity";
 
+@Schema()
 @ObjectType()
 export class Chat extends AbstractEntity {
   @Field()
