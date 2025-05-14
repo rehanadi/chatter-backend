@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { GraphQLCSSMiddleware } from './app.middleware';
 import { LoggerModule } from "nestjs-pino";
 import { AuthModule } from './auth/auth.module';
+import { ChatsModule } from './chats/chats.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { AuthModule } from './auth/auth.module';
     DatabaseModule,
     UsersModule,
     AuthModule,
+    ChatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
