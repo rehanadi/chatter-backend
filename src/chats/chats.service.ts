@@ -8,8 +8,6 @@ export class ChatsService {
   constructor(private readonly chatsRepository: ChatsRepository) {}
 
   async create(createChatInput: CreateChatInput, userId: string) {
-    console.log('createChatInput:', createChatInput);
-    console.log('userId:', userId);
     return this.chatsRepository.create({
       ...createChatInput,
       userId,
@@ -17,8 +15,8 @@ export class ChatsService {
     });
   }
 
-  findAll() {
-    return `This action returns all chats`;
+  async findAll() {
+    return this.chatsRepository.findAll({});
   }
 
   findOne(id: number) {
