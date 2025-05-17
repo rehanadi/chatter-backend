@@ -20,7 +20,7 @@ export class MessagesResolver {
   async createMessage(
     @Args('createMessageInput') createMessageInput: CreateMessageInput,
     @CurrentUser() user: TokenPayload,
-  ){
+  ): Promise<Message> {
     return this.messagesService.createMessage(createMessageInput, user._id);
   }
 
@@ -28,9 +28,8 @@ export class MessagesResolver {
   @UseGuards(GqlAuthGuard)
   async getMessages(
     @Args() getMessageArgs: GetMessagesArgs,
-    @CurrentUser() user: TokenPayload,
-  ) {
-    return this.messagesService.getMessages(getMessageArgs, user._id);
+  ): Promise<Message[]> {
+    return this.messagesService.getMessages(getMessageArgs);
   }
 
   @Subscription(() => Message, {
@@ -39,16 +38,17 @@ export class MessagesResolver {
     // messageCreated: subscription name
     filter: (payload, variables, context) => {
       const userId = context.req.user._id;
+      const message: Message = payload.messageCreated;
+
       return (
-        payload.messageCreated.chatId === variables.chatId &&
-        payload.messageCreated.userId !== userId
+        message.chatId === variables.chatId &&
+        message.user._id.toHexString() !== userId
       );
     }
   })
   messageCreated(
     @Args() messageCreatedArgs: MessageCreatedArgs,
-    @CurrentUser() user: TokenPayload, // context user from onConnect
   ) {
-    return this.messagesService.messageCreated(messageCreatedArgs, user._id);
+    return this.messagesService.messageCreated(messageCreatedArgs);
   }
 }

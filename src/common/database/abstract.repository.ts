@@ -7,7 +7,7 @@ import { FilterQuery, Model, Types, UpdateQuery } from "mongoose";
 export abstract class AbstractRepository<T extends AbstractEntity> {
   protected abstract readonly logger: Logger;
 
-  constructor(protected readonly model: Model<T>) {}
+  constructor(public readonly model: Model<T>) {}
 
   // Omit will creates a new type based on T but excludes the _id field
   async create(document: Omit<T, "_id">): Promise<T> {
