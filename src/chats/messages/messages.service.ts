@@ -7,7 +7,6 @@ import { GetMessagesArgs } from "./dto/get-messages.args";
 import { PubSub } from "graphql-subscriptions";
 import { PUB_SUB } from "src/common/constants/injection-tokens";
 import { MESSAGE_CREATED } from "./constants/pubsub-triggers";
-import { MessageCreatedArgs } from "./dto/message-created.args";
 import { MessageDocument } from "./entities/message.schema";
 import { UsersService } from "src/users/users.service";
 
@@ -55,12 +54,15 @@ export class MessagesService {
     return message;
   }
 
-  async getMessages({ chatId }: GetMessagesArgs) {
+  async getMessages({ chatId, skip, limit }: GetMessagesArgs) {
     // Aggragate to convert MongoDB document into entity object
     return this.chatsRepository.model.aggregate([
       { $match: { _id: new Types.ObjectId(chatId) } }, // Find the chat by chat ID
       { $unwind: '$messages' }, // Unpack the messages column from the chat
       { $replaceRoot: { newRoot: '$messages' } }, // Remove chat properties except messages
+      { $sort: { createdAt: -1 } }, // Sort the messages by createdAt in descending order
+      { $skip: skip ?? 0 }, // Skip the first n messages
+      { $limit: limit ?? 15 }, // Limit the number of messages to n
       {
         $lookup: {
           from: 'users',
@@ -77,5 +79,15 @@ export class MessagesService {
 
   async messageCreated() {
     return this.pubSub.asyncIterableIterator<Message>(MESSAGE_CREATED);
+  }
+
+  async countMessages(chatId: string) {
+    return (
+      await this.chatsRepository.model.aggregate([
+        { $match: { _id: new Types.ObjectId(chatId) } }, // Find the chat by chat ID
+        { $unwind: '$messages' }, // Unpack the messages column from the chat
+        { $count: 'count' }, // Count the number of messages
+      ])
+    )[0];
   }
 }

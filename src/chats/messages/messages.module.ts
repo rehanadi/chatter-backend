@@ -3,6 +3,7 @@ import { MessagesService } from './messages.service';
 import { MessagesResolver } from './messages.resolver';
 import { ChatsModule } from "../chats.module";
 import { UsersModule } from "src/users/users.module";
+import { MessagesController } from './messages.controller';
 
 @Module({
   imports: [
@@ -10,5 +11,6 @@ import { UsersModule } from "src/users/users.module";
     UsersModule,
   ],
   providers: [MessagesResolver, MessagesService],
+  controllers: [MessagesController],
 })
 export class MessagesModule {}
