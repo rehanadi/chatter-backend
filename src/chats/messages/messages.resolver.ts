@@ -36,19 +36,19 @@ export class MessagesResolver {
     // payload from the return value of the publish function
     // variables from the args
     // messageCreated: subscription name
-    filter: (payload, variables, context) => {
+    filter: (payload, variables: MessageCreatedArgs, context) => {
       const userId = context.req.user._id;
       const message: Message = payload.messageCreated;
 
       return (
-        message.chatId === variables.chatId &&
+        variables.chatIds.includes(message.chatId) &&
         message.user._id.toHexString() !== userId
       );
     }
   })
   messageCreated(
-    @Args() messageCreatedArgs: MessageCreatedArgs,
+    @Args() _messageCreatedArgs: MessageCreatedArgs,
   ) {
-    return this.messagesService.messageCreated(messageCreatedArgs);
+    return this.messagesService.messageCreated();
   }
 }

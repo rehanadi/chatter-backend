@@ -75,13 +75,7 @@ export class MessagesService {
     ]);
   }
 
-  async messageCreated({ chatId }: MessageCreatedArgs) {
-    // Authenticate the user and check if they have access to the chat
-    await this.chatsRepository.findOne({
-      _id: chatId,
-      // ...this.chatsService.userChatFilter(userId),
-    });
-
+  async messageCreated() {
     return this.pubSub.asyncIterableIterator<Message>(MESSAGE_CREATED);
   }
 }
