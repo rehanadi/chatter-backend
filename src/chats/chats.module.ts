@@ -6,6 +6,7 @@ import { DatabaseModule } from "src/common/database/database.module";
 import { Chat } from "./entities/chat.entity";
 import { ChatSchema } from "./entities/chat.schema";
 import { MessagesModule } from './messages/messages.module';
+import { ChatsController } from './chats.controller';
 
 @Module({
   imports: [
@@ -16,5 +17,6 @@ import { MessagesModule } from './messages/messages.module';
   ],
   providers: [ChatsResolver, ChatsService, ChatsRepository],
   exports: [ChatsRepository],
+  controllers: [ChatsController],
 })
 export class ChatsModule {}
