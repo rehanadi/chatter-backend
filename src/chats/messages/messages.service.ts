@@ -56,7 +56,7 @@ export class MessagesService {
 
   async getMessages({ chatId, skip, limit }: GetMessagesArgs) {
     // Aggragate to convert MongoDB document into entity object
-    return this.chatsRepository.model.aggregate([
+    const messages = await this.chatsRepository.model.aggregate([
       { $match: { _id: new Types.ObjectId(chatId) } }, // Find the chat by chat ID
       { $unwind: '$messages' }, // Unpack the messages column from the chat
       { $replaceRoot: { newRoot: '$messages' } }, // Remove chat properties except messages
@@ -75,6 +75,12 @@ export class MessagesService {
       { $unset: 'userId' }, // Remove the userId field from the message
       { $set: { chatId } }, // Add the chatId field to the message
     ]);
+
+    messages.forEach((message) => {
+      message.user = this.usersService.toEntity(message.user); // Convert user document to entity
+    });
+
+    return messages;
   }
 
   async messageCreated() {

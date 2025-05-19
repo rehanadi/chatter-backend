@@ -17,9 +17,8 @@ export class AuthService {
     expires.setSeconds(expires.getSeconds() + this.configService.getOrThrow('JWT_EXPIRATION'));
 
     const tokenPayload: TokenPayload = {
+      ...user,
       _id: user._id.toHexString(),
-      email: user.email,
-      username: user.username,
     };
 
     const token = this.jwtService.sign(tokenPayload);

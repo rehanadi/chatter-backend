@@ -4,10 +4,14 @@ import { UpdateChatInput } from './dto/update-chat.input';
 import { ChatsRepository } from "./chats.repository";
 import { PipelineStage, Types } from "mongoose";
 import { PaginationArgs } from "src/common/dto/pagination-args.dto";
+import { UsersService } from "src/users/users.service";
 
 @Injectable()
 export class ChatsService {
-  constructor(private readonly chatsRepository: ChatsRepository) {}
+  constructor(
+    private readonly chatsRepository: ChatsRepository,
+    private readonly usersService: UsersService,
+  ) {}
 
   // userChatFilter(userId: string) {
   //   return {
@@ -68,7 +72,7 @@ export class ChatsService {
         return;
       }
 
-      chat.latestMessage.user = chat.latestMessage.user[0]; // Get the first user from the array
+      chat.latestMessage.user = this.usersService.toEntity(chat.latestMessage.user[0]); // Get the first user from the array
       delete chat.latestMessage.userId; // Remove userId from latestMessage
       chat.latestMessage.chatId = chat._id; // Add chatId to latestMessage
     });

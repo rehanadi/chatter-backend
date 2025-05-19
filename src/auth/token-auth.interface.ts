@@ -1,5 +1,4 @@
-export interface TokenPayload {
-  _id: string;
-  email: string;
-  username: string;
-}
+import { User } from "src/users/entities/user.entity";
+
+// Change _id from ObjectId to string
+export type TokenPayload = Omit<User, "_id"> & { _id: string };
