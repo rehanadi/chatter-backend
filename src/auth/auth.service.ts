@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import { ConfigService } from "@nestjs/config";
 import { TokenPayload } from "./token-auth.interface";
 import { JwtService } from "@nestjs/jwt";
+import { getJwt } from "./jwt.util";
 
 @Injectable()
 export class AuthService {
@@ -27,14 +28,16 @@ export class AuthService {
       httpOnly: true,
       expires,
     });
+
+    return token;
   }
 
   // Verify JWT manually for WebSocket connections since can't use cookie parser like in HTTP
-  verifyWs(request: Request): TokenPayload {
+  verifyWs(request: Request, connectionParams: any = {}): TokenPayload {
     const cookies: string[] = request.headers.cookie?.split('; ') || [];
-    const authCookie = cookies.find(cookie => cookie.includes('Authentication'));
+    const authCookie = cookies?.find(cookie => cookie.includes('Authentication'));
     const jwt = authCookie?.split('Authentication=')[1] || '';
-    return this.jwtService.verify(jwt);
+    return this.jwtService.verify(jwt || getJwt(connectionParams.token || '') || '');
   }
 
   logout(response: Response) {
