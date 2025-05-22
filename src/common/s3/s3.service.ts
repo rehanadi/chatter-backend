@@ -11,7 +11,9 @@ export class S3Service {
     // Init credentials for local environment only so no need to getOrThrow
     const accessKeyId = configService.get('AWS_ACCESS_KEY');
     const secretAccessKey = configService.get('AWS_SECRET_ACCESS_KEY');
-    const clientConfig: S3ClientConfig = {};
+    const clientConfig: S3ClientConfig = {
+      region: 'ap-southeast-1',
+    };
 
     if (accessKeyId && secretAccessKey) {
       clientConfig.credentials = {
